@@ -30,6 +30,7 @@ const create = (req, res, next) => {
 
   })
   .then(populatedUser=>{
+    console.log(populatedUser);
     var token = authenticationUtil.generateAuthToken(populatedUser);
     res.header('x-access-token', token).status(200).send(populatedUser);
   })
