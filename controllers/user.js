@@ -26,21 +26,13 @@ const create = (req, res, next) => {
   });
   user.save()
   .then((savedUser)=>{
-    return User.populate(savedUser, {path:"library"})
-    .then(populatedUser=>{
-      console.log(populatedUser);
-      var token = authenticationUtil.generateAuthToken(populatedUser);
-      res.header('x-access-token', token).status(200).send(populatedUser);
-    })
-    .catch((err)=>{
-      console.log(err)
-      res.status(500).send({
-        message:err.message
-      });
-    });
+    return User.populate(savedUser, {path:"library"});
 
   })
-
+  .then(populatedUser=>{
+    var token = authenticationUtil.generateAuthToken(populatedUser);
+    res.header('x-access-token', token).status(200).send(populatedUser);
+  })
   .catch((err)=>{
     console.log(err)
     res.status(500).send({
@@ -127,7 +119,7 @@ const fetchUserIssuedBooks = (req, res, next) => {
   })
   .catch((err)=>{
     res.status(500).send({
-      message: err.message
+        message: err.message
     });
   });
 };
