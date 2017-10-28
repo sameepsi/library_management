@@ -16,6 +16,7 @@ router.use(authenticationUtil.verifyToken);
 
 /*POST /library add new library
 Only ROOT user can call this end-point
+@param @required @header x-access-token- valid access token for the user
 @param @required @body name
 @param @body description
 */

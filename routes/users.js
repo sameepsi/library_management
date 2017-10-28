@@ -20,11 +20,12 @@ router.post('/login', controller.login);
 router.use(authenticationUtil.verifyToken);
 
 /*POST /logout to logout user
-@header x-access-token- a valid token for the user
+@param @required @header x-access-token- valid access token for the user
 */
 router.post('/logout', controller.logout);
 
 /*GET /users/books
+@param @required @header x-access-token- valid access token for the user
 Returns all books issued to the requesting user
 */
 router.get("/books", controller.fetchUserIssuedBooks);
