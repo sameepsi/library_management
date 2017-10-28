@@ -1,5 +1,7 @@
 var authenticationUtil = require('../auth/authenticationUtil');
 var User = require('../models/user');
+var User = require('../models/user');
+var Library = require('../models/library');
 //creates new user in db and returns response with valid token
 const create = (req, res, next) => {
   var email = req.body.email;
@@ -21,24 +23,43 @@ const create = (req, res, next) => {
       message:'Please provide library_id'
     });
   }
-  var user = new User({
-    email, password, library:library_id
-  });
-  user.save()
-  .then((savedUser)=>{
-    return User.populate(savedUser, {path:"library"});
 
-  })
-  .then(populatedUser=>{
-    var token = authenticationUtil.generateAuthToken(populatedUser);
-    res.header('x-access-token', token).status(200).send(populatedUser);
+
+  Library.findById(library_id)
+  .then(library=>{
+    if(library){
+      var user = new User({
+        email, password, library:library_id
+      });
+      user.save()
+      .then((savedUser)=>{
+        return User.populate(savedUser, {path:"library"});
+
+      })
+      .then(populatedUser=>{
+        var token = authenticationUtil.generateAuthToken(populatedUser);
+        res.header('x-access-token', token).status(200).send(populatedUser);
+      })
+      .catch((err)=>{
+        console.log(err)
+        res.status(500).send({
+          message:err.message
+        });
+      });
+    }
+    else{
+      return res.status(400).send({
+        message:"No such library exists"
+      });
+    }
   })
   .catch((err)=>{
     console.log(err)
     res.status(500).send({
       message:err.message
     });
-  });
+  })
+
 };
 
 /*checks whether the requested user credentials are valid or not
@@ -119,7 +140,7 @@ const fetchUserIssuedBooks = (req, res, next) => {
   })
   .catch((err)=>{
     res.status(500).send({
-        message: err.message
+      message: err.message
     });
   });
 };
