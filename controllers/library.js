@@ -1,7 +1,11 @@
 var Library = require('../models/library');
 
 const fetchAll = (req, res, next) => {
-  Library.find()
+  let query = {};
+  if(req.query.library_id){
+    query['_id'] = req.query.library_id;
+  }
+  Library.find(query)
   .then((libraries)=>{
     res.status(200).send(libraries);
   })
